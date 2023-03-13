@@ -25,7 +25,7 @@ export const H2 = ({className, ...props} : HeadingPropsType) => (
   <Heading 
     as={'h2'} 
     className={cn(
-      'text-xl leading-10 text-primary dark:text-primary-dark font-bold my-6',
+      'text-xl leading-10 text-primary font-bold my-6',
       className
     )}
     {...props}
@@ -36,7 +36,7 @@ export const H3 = ({className, ...props} : HeadingPropsType) => (
     as={'h3'} 
     className={cn(
       className,
-      'text-md leading-9 text-primary dark:text-primary-dark font-bold my-6'
+      'text-md leading-9 text-primary font-bold my-6'
     )}
     {...props}
   />

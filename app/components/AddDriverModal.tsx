@@ -2,33 +2,41 @@ import React from 'react';
 import Button from './Button';
 import { H1 } from './Heading';
 import Input from './Input';
-import { ModalContext } from './Drivers';
+import { ModalContext } from './DriversSideBar';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 import colors from '../../utils/colors';
 import { object, string } from 'yup';
 import { Formik } from 'formik';
+import { addDriver } from '../../utils/firebase.utils';
+import { User } from '../../utils/typings';
 function AddDriverModal() {
   const validationSchema = object({
     firstName: string().required(),
     lastName: string().required(),
     phoneNumber: string().required(),
-    email: string().required(),
+    email: string().required().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
   });
   const initialValues = {
     firstName: "",
     lastName: "",
     phoneNumber: "",
     email: "",
+    password: "",
+  }
+  async function onSubmit(values: User) {
+    const driver = await addDriver(values);
   }
   return (
     <ModalContext.Consumer>
       {theme => {
         return (
-          <div className='bg-white rounded-lg p-4 w-4/6 h-3/6'>
+          <div className='bg-white w-[400px] rounded-lg p-4  h-auto'>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
-              onSubmit={(values) => { console.log(values)}}
+              onSubmit={async (values) => {
+                await onSubmit(values);
+              }}
             >
               {({
                 values,
@@ -39,43 +47,36 @@ function AddDriverModal() {
                 handleSubmit,
                 isSubmitting,
               }) => (
-                <form onSubmit={handleSubmit} className='flex relative flex-col p-4 gap-4'>
+                <form className='relative flex flex-col gap-4' onSubmit={handleSubmit}>
                   <H1>Жолооч бүртгэх</H1>
                   <Input
-                  value={values.firstName}
-                    onChange={handleChange('firstName')}
-                    placeholder='Овог'
-                  />
-                  <Input
-                  value={values.lastName}
-                    onChange={handleChange('lastName')}
                     placeholder='Нэр'
+                    onChange={handleChange('firstName')}
+                    value={values.firstName}
                   />
                   <Input
-                  value={values.phoneNumber}
-                    onChange={handleChange('phoneNumber')}
-                    placeholder='Утасны дугаар'
+                    placeholder='Овог'
+                    onChange={handleChange('lastName')}
+                    value={values.lastName}
                   />
-                  <Input
-                  value={values.email}
+                   <Input
+                    placeholder='И-Майл'
                     onChange={handleChange('email')}
-                    placeholder='И-Мэйл'
+                    value={values.email}
                   />
-                  <Button
-                    onClick={() => handleSubmit()}
-                    className='bg-primary py-4 justify-center items-center text-white'
-                  >
-                    Хадгалах
-                  </Button>
-                  <Button 
-                    onClick={() => handleSubmit()}
-                    className='absolute top-0 right-0 p-2 text-primary'
-                  >
-                    <XMarkIcon
-                      width={20}
-                      height={20}
-                      color={colors.primary}
-                    />
+                  <Input
+                    placeholder='Утасны дугаар'
+                    onChange={handleChange('phoneNumber')}
+                    value={values.phoneNumber}
+                  />
+                  <Input
+                    placeholder='Нууц үг'
+                    onChange={handleChange('password')}
+                    value={values.password}
+                  />
+                  <Button className='bg-primary text-white py-4'>Хадгалах</Button>
+                  <Button onClick={theme.closeModal} className='absolute top-0 right-0'>
+                    <XMarkIcon color={colors.primary} width={20} height={20}/>
                   </Button>
                 </form>
               )}
